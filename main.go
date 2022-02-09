@@ -21,26 +21,27 @@ func main() {
 	ul := 1.0   // upper limit
 	n := int64(100)
 	fmt.Printf("sum: %v\n", integral(f, ll, ul, n))
+	fmt.Printf("newton: %v\n", newtonRaphson(f, 0.5))
 }
 
-func central(f func(x float64) float64, x float64, e float64) float64 {
+func central(f func(float64) float64, x float64, e float64) float64 {
 	return (f(x+e) - f(x-e)) / (2 * e)
 }
 
-func backward(f func(x float64) float64, x float64, e float64) float64 {
+func backward(f func(float64) float64, x float64, e float64) float64 {
 	return (f(x) - f(x-e)) / e
 }
 
-func forward(f func(x float64) float64, x float64, e float64) float64 {
+func forward(f func(float64) float64, x float64, e float64) float64 {
 	return (f(x+e) - f(x)) / e
 }
 
-func second(f func(x float64) float64, x float64, e float64) float64 {
+func second(f func(float64) float64, x float64, e float64) float64 {
 	return (f(x+e) - 2*f(x) + f(x-e)) / (e * e)
 }
 
 // Simpson's 1/3 Rule
-func integral(f func(x float64) float64, lower float64, upper float64, steps int64) float64 {
+func integral(f func(float64) float64, lower float64, upper float64, steps int64) float64 {
 	step := (upper - lower) / float64(steps)
 	sum := f(lower) + f(upper)
 	for i := int64(1); i <= steps-1; i++ {
@@ -53,4 +54,14 @@ func integral(f func(x float64) float64, lower float64, upper float64, steps int
 	}
 	sum = sum * step / 3
 	return sum
+}
+
+// x - initial guess
+func newtonRaphson(f func(float64) float64, x float64) float64 {
+	h := f(x) / central(f, x, 1e-07)
+	for math.Abs(h) >= 0.0001 {
+		h = f(x) / central(f, x, 1e-07)
+		x = x - h
+	}
+	return x
 }
