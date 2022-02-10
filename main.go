@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"gonum.org/v1/gonum/diff/fd"
+	"gonum.org/v1/gonum/integrate/quad"
 	"math"
 )
 
@@ -10,17 +12,30 @@ func f(x float64) float64 {
 }
 
 func main() {
+	//derivative
 	x := 2.0
 	e := 1e-07
 	fmt.Printf("backward: %v\n", backward(f, x, e))
 	fmt.Printf("forward: %v\n", forward(f, x, e))
 	fmt.Printf("central: %v\n", central(f, x, e))
 	fmt.Printf("second: %v\n", second(f, x, e))
+	//https://pkg.go.dev/gonum.org/v1/gonum
+	fmt.Println("f'(0) ≈", fd.Derivative(f, x, nil))
+	df := fd.Derivative(f, x, &fd.Settings{
+		Formula: fd.Forward,
+		Step:    e,
+	})
+	fmt.Println("f'(0) ≈", df)
 
+	//integral
 	ll := 1e-08 // lower limit
 	ul := 1.0   // upper limit
 	n := int64(100)
 	fmt.Printf("sum: %v\n", integral(f, ll, ul, n))
+	//https://pkg.go.dev/gonum.org/v1/gonum
+	fmt.Printf("sum gonum = %v\n", quad.Fixed(f, ll, ul, 100, nil, 0))
+
+	//newton
 	fmt.Printf("newton: %v\n", newtonRaphson(f, 0.5))
 }
 
