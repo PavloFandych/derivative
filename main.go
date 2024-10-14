@@ -8,12 +8,12 @@ import (
 )
 
 func f(x float64) float64 {
-	return math.Log(x)
+	return x*x - 5
 }
 
 func main() {
 	//derivative
-	x := 2.0
+	x := 1.0
 	e := 1e-07
 	fmt.Printf("backward: %v\n", backward(f, x, e))
 	fmt.Printf("forward: %v\n", forward(f, x, e))
